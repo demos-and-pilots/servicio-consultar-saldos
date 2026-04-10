@@ -1,5 +1,9 @@
 name: cd
 
+env:
+  LAMBDA_FUNCTION_NAME: consultar-saldos
+  AWS_REGION: us-east-1
+
 on:
   push:
     branches: [main]
@@ -23,7 +27,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Install dependencies
         run: pip install -r requirements.txt -t package/
@@ -36,5 +40,5 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code \
-            --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} \
+            --function-name $LAMBDA_FUNCTION_NAME \
             --zip-file fileb://function.zip
